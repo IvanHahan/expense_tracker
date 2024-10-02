@@ -40,6 +40,31 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _sumbitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+    final titleIsInvalid = _titleController.text.trim().isEmpty;
+    final dateIsNotSelected = _selectedDate == null;
+
+    if (amountIsInvalid || titleIsInvalid || dateIsNotSelected) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Invalid input'),
+          content: const Text(
+              'Please make sure a valid title, amount, date and category was entered.'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: const Text('OK'))
+          ],
+        ),
+      );
+
+      return;
+    }
+
     widget.onAddExpense(
       Expense(
         title: _titleController.text,
@@ -54,7 +79,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
       child: Column(
         children: [
           TextField(
